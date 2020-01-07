@@ -1,2 +1,7 @@
 # cabhow-bookings
-This Project contains all the booking related stuff
+This project contains all the booking related stuff
+
+
+Run the application giving following VM arguments
+
+-Dspring.profiles.active=qa
