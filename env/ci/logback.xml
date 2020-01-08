@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<contextName>esal-core</contextName>
+
+	<jmxConfigurator />
+
+	<appender name="REQUEST_RESPONSE_REST" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<File>${catalina.base}/logs/esalcore-rr-rest.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c{1}:%L [%X{RqUID}] - %replace( %replace(%msg){'[\r\n\t]+', ''}){'Authorization: Bearer .*', 'Authorization:'}%n
+			</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<maxIndex>10</maxIndex>
+			<FileNamePattern>${catalina.base}/logs/esalcore-rr-rest.log.%i
+			</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>10MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<appender name="DEFAULT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<!--See also http://logback.qos.ch/manual/appenders.html#RollingFileAppender -->
+		<File>${catalina.base}/logs/esalcore-default.log</File>
+		<Append>true</Append>
+		<encoder>
+			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %5p %c{1}:%L - %replace( %replace(%msg){'[\r\n\t]+', ''}){'Authorization: Bearer .*', 'Authorization:'}%n</pattern>
+		</encoder>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<maxIndex>10</maxIndex>
+			<FileNamePattern>${catalina.base}/logs/esalcore-default.log.%i
+			</FileNamePattern>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<MaxFileSize>10MB</MaxFileSize>
+		</triggeringPolicy>
+	</appender>
+
+	<logger name="com.sih.esal.common.filters.RequestLoggingFilter" level="TRACE">
+		<appender-ref ref="DEFAULT" />
+	</logger>
+
+	<logger
+		name="com.sih.esal.common.auth.impl.TokenValidatorRESTService" level="debug">
+		<appender-ref ref="DEFAULT" />
+	</logger>
+
+	<logger name="org.apache.http.wire" level="INFO" additivity="false">
+		<appender-ref ref="DEFAULT" />
+	</logger>
+
+	<logger name="com.sih.esal.core.rest.client.impl" level="debug">
+		<appender-ref ref="REQUEST_RESPONSE_REST" />
+	</logger>
+
+	<root level="INFO">
+		<appender-ref ref="DEFAULT" />
+	</root>
+</configuration>

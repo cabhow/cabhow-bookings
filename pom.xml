@@ -3,6 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.cabhow.rest</groupId>
 	<artifactId>cabhow-bookings</artifactId>
+  <packaging>war</packaging>
 	<version>1.0.9-SNAPSHOT</version>
 	<name>cabhow-bookings</name>
 	<description>This Jar contains all the booking related stuff</description>
@@ -18,15 +19,23 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<!-- <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version> -->
+    <!--<spring-boot.version>2.0.7.RELEASE</spring-boot.version>
+    <spring.version>5.0.11.RELEASE</spring.version>-->
+    <springfox.version>2.9.2</springfox.version>
+    <swagger.version>1.5.21</swagger.version>
+    <swagger2.version>2.7.0</swagger2.version>
+    <!--<swagger2.version>2.7.0</swagger2.version>-->
+    <swagger-codegen.version>2.3.1</swagger-codegen.version>
+    <okhttp-version>2.7.5</okhttp-version>
+    <gson-version>2.8.1</gson-version>
+    <gson-fire-version>1.8.2</gson-fire-version>
+    <argLine>-Xms512m -Xmx1024m -Xss256k</argLine>
+    <!-- <spring-cloud.version>Greenwich.RELEASE</spring-cloud.version> -->
 	</properties>
 
 	<dependencies>
 		<!-- Start: Spring Boot/Web Dependencies -->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-web</artifactId>
-		</dependency>
+
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
@@ -36,10 +45,44 @@
 			<artifactId>spring-security-core</artifactId>
 			<version>5.2.1.RELEASE</version>
 		</dependency>
-		<!-- End: Spring Boot/Web Dependencies -->
-		<!-- Start: Database Connectivity Dependencies -->
-		<!-- <dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-entitymanager</artifactId> 
-			<version>5.3.7.Final</version> </dependency> -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-redis</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-amqp</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-joda</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
@@ -56,18 +99,36 @@
 			<artifactId>springdoc-openapi-ui</artifactId>
 			<version>1.2.15</version>
 		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>2.6.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>2.6.1</version>
-			<scope>compile</scope>
-		</dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger2</artifactId>
+      <version>${springfox.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>io.swagger</groupId>
+          <artifactId>swagger-models</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <dependency>
+      <groupId>io.springfox</groupId>
+      <artifactId>springfox-swagger-ui</artifactId>
+      <version>${springfox.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-annotations</artifactId>
+      <version>${swagger.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-models</artifactId>
+      <version>${swagger.version}</version>
+    </dependency>
 		<!-- End: Swagger 3 Dependencies -->
 		<dependency>
         	<groupId>org.projectlombok</groupId>
@@ -76,7 +137,58 @@
         </dependency>
 	</dependencies>
 	<build>
+    <filters>
+      <filter>${project.basedir}/env/dev/esal-core.properties</filter>
+      <filter>${project.basedir}/env/dev/envconfig.properties</filter>
+    </filters>
 		<plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-war-plugin</artifactId>
+        <version>3.2.0</version>
+        <configuration>
+          <webResources>
+            <resource>
+              <filtering>true</filtering>
+              <directory>env/dev</directory>
+              <targetPath>META-INF</targetPath>
+              <includes>
+                <include>context.xml</include>
+              </includes>
+            </resource>
+          </webResources>
+          <warSourceDirectory>src/main/java</warSourceDirectory>
+          <warName>cab-booking</warName>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
+        </configuration>
+      </plugin>
+			<plugin>
+        <groupId>io.swagger</groupId>
+        <artifactId>swagger-codegen-maven-plugin</artifactId>
+        <version>${swagger-codegen.version}</version>
+			<executions>
+			<execution>
+				<id>generate-cabbooking-server</id>
+				<goals>
+					<goal>generate</goal>
+				</goals>
+				<configuration>
+					<inputSpec>${basedir}/src/main/resources/bookings.yaml</inputSpec>
+					<addCompileSourceRoot>true</addCompileSourceRoot>
+					<language>spring</language>
+					<apiPackage>com.cabhow.rest.prod.bookings.api</apiPackage>
+					<modelPackage>com.cabhow.rest.prod.bookings.model</modelPackage>
+					<generateSupportingFiles>false</generateSupportingFiles>
+					<configOptions>
+						<library>spring-boot</library>
+						<interfaceOnly>true</interfaceOnly>
+						<useBeanValidation>true</useBeanValidation>
+						<dateLibrary>joda</dateLibrary>
+					</configOptions>
+				</configuration>
+      </execution>
+      </executions>
+      </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

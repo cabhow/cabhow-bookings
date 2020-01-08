@@ -1,3 +1,4 @@
+/*
 package com.cabhow.rest.controller;
 
 import java.util.List;
@@ -62,3 +63,4 @@ public class BookingController {
 		return respEntity;
 	}
 }
+*/

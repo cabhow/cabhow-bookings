@@ -1,13 +1,12 @@
 package com.cabhow.rest.service;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.cabhow.rest.exception.ResourceNotFoundException;
 import com.cabhow.rest.model.Booking;
 import com.cabhow.rest.repository.BookingRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -32,7 +31,7 @@ public class BookingService {
 	}
 
 	public Booking updateBooking(long id, Booking booking) {
-		booking.setId(id);
+		//booking.setId(id);
 		Booking addedBooking = repository.save(booking);
 		return addedBooking;
 	}

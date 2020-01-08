@@ -1,0 +1,207 @@
+swagger: '2.0'
+info:
+  title: Bookings
+  version: 1.0.0
+  description: 'This API is used to manage cab bookings'
+basePath: /bookings
+schemes:
+- http
+host: 'localhost:8080'
+securityDefinitions:
+  Bearer:
+    description: For accessing the API a valid JWT token must be passed in all the queries in the 'Authorization' header.
+    name: Authorization
+    in: header
+    type: apiKey
+security:
+- Bearer: []
+consumes:
+- application/json
+produces:
+- application/json
+paths:
+  /add:
+    post:
+      tags:
+      - cabbookings
+      description: add bookings
+      operationId: addBooking
+      parameters:
+      - name: addBookingPayload
+        in: body
+        schema:
+          type: object
+          properties:
+            sourceCity:
+              type: string
+            destinationCity:
+              type: string
+            tripStartDate:
+              type: string
+              format: date-time
+            tripEndDate:
+              type: string
+              format: date-time
+            typeOfVehicle:
+              type: string
+            customer:
+              type: array
+              items:
+                $ref: '#/definitions/Customer'
+      responses:
+        '204':
+          description: 'Successful, the payment has been registered'
+        '400':
+          description: One or more errors occurred while processing the request.
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+        '401':
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              description: Required header for 401 responses.
+              type: string
+              enum:
+              - Bearer
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+        '500':
+          description: One or more errors occurred while processing the request.
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+  /getBookings:
+    post:
+      tags:
+      - cabbookings
+      description: get bookings
+      operationId: getBookings
+      parameters:
+      - name: getBookingPayload
+        in: body
+        schema:
+          type: object
+          properties:
+            bookingId:
+              type: string
+      responses:
+        '200':
+          description: 'Successful, the payment has been registered'
+          schema:
+            type: object
+            properties:
+              sourceCity:
+                type: string
+              destinationCity:
+                type: string
+              tripStartDate:
+                type: string
+                format: date-time
+              tripEndDate:
+                type: string
+                format: date-time
+              typeOfVehicle:
+                type: string
+              customer:
+                type: array
+                items:
+                  $ref: '#/definitions/Customer'
+        '400':
+          description: One or more errors occurred while processing the request.
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+        '401':
+          description: Unauthorized
+          headers:
+            WWW-Authenticate:
+              description: Required header for 401 responses.
+              type: string
+              enum:
+              - Bearer
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+        '500':
+          description: One or more errors occurred while processing the request.
+          schema:
+            type: object
+            description: An error that occurred during a request.
+            discriminator: Error
+            required:
+            - code
+            - message
+            properties:
+              code:
+                type: integer
+                description: The error code.
+              message:
+                type: string
+                description: The error message.
+definitions:
+  Customer:
+    type: object
+    properties:
+      custName:
+        type: string
+      custEmail:
+        type: string
+      phone:
+        type: string
